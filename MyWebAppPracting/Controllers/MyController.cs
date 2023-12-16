@@ -9,6 +9,12 @@ using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using MyWebAppPracting.UnitOfWorks;
+using System.IO;
+using System.Diagnostics;
+using Serilog;
+using MyWebAppPracting.ModelDtos.ModelDtoUser;
+using MyWebAppPracting.MyAttribues;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MyWebAppPracting.Controllers
 {
@@ -17,24 +23,37 @@ namespace MyWebAppPracting.Controllers
     [Route("[controller]")]
     public class MyController : Controller
     {
-        public UnitOfWork UnitOfWork { get; }
 
-        public MyController(UnitOfWork unitOfWorks)
+        static bool check = true;
+        public ILogger<MyController> logger { get; set; }
+        public UnitOfWork UnitOfWork { get; set; }
+
+        public MyController(UnitOfWork unitOfWorks, ILogger<MyController> logger)
         {
             UnitOfWork = unitOfWorks;
+            this.logger = logger;
         }
         #region StudentCrudfunctionally
 
-        [HttpGet("GetAllStudents")]
-        public async Task<IEnumerable<object>> GetAllStudents() =>
-            await UnitOfWork.Students.GetAll().ToListAsync();
 
+
+        [HttpGet("GetAllStudents")]
+        [Authorize]
+        public async Task<IEnumerable<Studentss>> GetAllStudents()
+        {
+            var user = HttpContext.User;
+
+            Log.Logger.Information($"started GetAllStudentsRequest");
+            var data = await UnitOfWork.Students.GetAll().ToListAsync();
+            Log.Logger.Information($"finished GetAllStudentsRequest");
+            return data;
+        }
 
 
         [HttpGet("GetAllStudentsWithCourses")]
         public async Task<IEnumerable<object>> GetAllStudentsWithCourses()
         {
-            
+
             var query = UnitOfWork.Students.GetAll();
             var data = await query.Include(s => s.CoursesAndstudents).Select(st => new
             {
@@ -52,8 +71,17 @@ namespace MyWebAppPracting.Controllers
 
 
         [HttpPost("AddStudent")]
-        public async Task AddStudent(Studentss st) =>
-          await UnitOfWork.Students.Insert(st);
+        public async Task AddStudent(StudentDto st)
+        {
+            var student = new Studentss()
+            {
+                Name = st.Name,
+                Surname = st.Surname,
+                GenId = st.GenId,
+                IsDeleted = 0
+            };
+            await UnitOfWork.Students.Insert(student);
+        }
 
 
 
@@ -63,7 +91,7 @@ namespace MyWebAppPracting.Controllers
           await UnitOfWork.Students.Delete(id);
 
         [HttpPut("UpdateStudent")]
-        public async Task UpdateStudent(string name,string surname, int id)
+        public async Task UpdateStudent(string name, string surname, int id)
         {
             Studentss data = (Studentss)await UnitOfWork.Students.Get(id);
             data.Name = name;

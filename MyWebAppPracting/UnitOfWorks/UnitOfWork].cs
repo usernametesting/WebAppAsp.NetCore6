@@ -1,4 +1,5 @@
-﻿using MyWebAppPracting.Models.ModelsUser;
+﻿using Microsoft.Extensions.Logging;
+using MyWebAppPracting.Models.ModelsUser;
 using MyWebAppPracting.Reposters;
 using System.Reflection.Metadata.Ecma335;
 
@@ -9,13 +10,16 @@ namespace MyWebAppPracting.UnitOfWorks
         public usersContext dbcontext { get; set; }
 
         private IStudentReposteriGeneric<Studentss> students;
-
         public IStudentReposteriGeneric<Studentss> Students
         {
             get
             {
                 if (students == null)
+                {
+                    var log = Thread.CurrentThread.ManagedThreadId.ToString();
                     return new StudentReposteriGeneric<Studentss>(dbcontext);
+
+                }
                 return students;
             }
 
@@ -23,6 +27,7 @@ namespace MyWebAppPracting.UnitOfWorks
         }
 
         private IStudentReposteriGeneric<Course> courses;
+
 
         public IStudentReposteriGeneric<Course> Courses
         {
@@ -43,7 +48,7 @@ namespace MyWebAppPracting.UnitOfWorks
         }
 
 
-        public void SaveChanges()=>
+        public void SaveChanges() =>
             dbcontext.SaveChanges();
 
 

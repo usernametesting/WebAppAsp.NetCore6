@@ -15,7 +15,11 @@ namespace MyWebAppPracting.Reposters
             dbset = this.dbcontext.Set<TEntity>();
         }
 
-        public  IQueryable<TEntity> GetAll() => dbset;
+        public  IQueryable<TEntity> GetAll()
+        {
+            var data = Thread.CurrentThread.ManagedThreadId.ToString();
+            return dbset;
+        }
 
         public async Task<TEntity> Get(int id) =>
             await dbset.FindAsync(id);

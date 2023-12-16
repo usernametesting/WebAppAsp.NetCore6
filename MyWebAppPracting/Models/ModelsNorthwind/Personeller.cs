@@ -10,7 +10,7 @@ namespace MyWebAppPracting.Models
         {
             InverseBagliCalistigiKisiNavigation = new HashSet<Personeller>();
             Satislars = new HashSet<Satislar>();
-            Territories = new HashSet<Bolgeler>();
+            //Territories = new HashSet<Bolgeler>();
         }
 
         public int PersonelId { get; set; }
@@ -37,6 +37,6 @@ namespace MyWebAppPracting.Models
         public virtual ICollection<Personeller> InverseBagliCalistigiKisiNavigation { get; set; }
         public virtual ICollection<Satislar> Satislars { get; set; }
 
-        public virtual ICollection<Bolgeler> Territories { get; set; }
+        //public virtual ICollection<Bolgeler> Territories { get; set; }
     }
 }
