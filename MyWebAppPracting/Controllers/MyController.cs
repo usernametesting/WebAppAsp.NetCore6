@@ -35,10 +35,12 @@ namespace MyWebAppPracting.Controllers
         }
         #region StudentCrudfunctionally
 
+        //eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiIyIiwibmFtZSI6IkFsaSIsInJvbGUiOiJBZG1pbixVc2VyIiwibmJmIjoxNzAyODI1NTkxLCJleHAiOjE3MDI5MTE5OTEsImlhdCI6MTcwMjgyNTU5MSwiaXNzIjoiZXhhbXBsZSIsImF1ZCI6ImV4YW1wbGUifQ.9EXqZGnxF84vEIlCKjMGNNLtmIavzhb8axLp2rcHBB8
 
 
         [HttpGet("GetAllStudents")]
-        [Authorize]
+        //[Authorize(Roles = "Admin,User")]
+        [Authorize("AdminOnly")]
         public async Task<IEnumerable<Studentss>> GetAllStudents()
         {
             var user = HttpContext.User;

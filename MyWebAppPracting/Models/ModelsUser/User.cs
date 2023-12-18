@@ -12,5 +12,8 @@ namespace MyWebAppPracting.Models.ModelsUser
         [Required]
         public string Password { get; set; }
 
+
+        public List<string> roles { get; set; }
+
     }
 }

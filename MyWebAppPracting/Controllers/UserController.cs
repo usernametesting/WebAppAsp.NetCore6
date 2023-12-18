@@ -18,8 +18,16 @@ namespace MyWebAppPracting.Controllers
 
         public List<User> users { get; set; } = new()
         {
-            new User() { Id=1,Username = "Isa",Password ="1234"},
-            new User() { Id=2,Username = "Ali",Password ="1111"},
+            new User() { Id=1,Username = "Isa",Password ="1234",
+            roles = new()
+            {
+                "Admin"
+            } },
+            new User() { Id=2,Username = "Ali",Password ="1111",
+            roles = new()
+            {  
+                "User"
+            } },
         };
         public UserController(IConfiguration config)
         {
@@ -45,13 +53,18 @@ namespace MyWebAppPracting.Controllers
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(config["Jwt:SignInKey"]);
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(new[]
+            var claims = new List<Claim>()
                 {
                     new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()) ,
                     new Claim(ClaimTypes.Name,user.Username)
-                }),
+                };
+
+           foreach (var role in user.roles)
+                claims.Add(new Claim(ClaimTypes.Role,role));
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+
+                Subject = new ClaimsIdentity(claims),
                 Expires = DateTime.UtcNow.AddDays(1),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
                 Issuer = "example",

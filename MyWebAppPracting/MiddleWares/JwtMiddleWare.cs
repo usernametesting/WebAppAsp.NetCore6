@@ -61,6 +61,7 @@ namespace MyWebAppPracting.MiddleWares
                 var jwtToken = (JwtSecurityToken)validatedToken;
                 var identity = new ClaimsIdentity(jwtToken.Claims);
                 var principal = new ClaimsPrincipal(identity);
+              
 
                 context.User = principal;
             }

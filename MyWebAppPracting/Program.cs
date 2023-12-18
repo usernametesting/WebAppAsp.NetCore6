@@ -13,6 +13,7 @@ using MyWebAppPracting.UnitOfWorks;
 using Serilog;
 using Serilog.Events;
 using System.Diagnostics;
+using System.Security.Claims;
 using System.Text;
 
 Log.Logger = new LoggerConfiguration()
@@ -61,6 +62,11 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ClockSkew = TimeSpan.Zero
         };
     });
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("AdminOnly", policy => policy.RequireClaim(ClaimTypes.Role, "Admin"));
+});
 
 builder.Host.UseSerilog();
 builder.Host.ConfigureLogging(logging =>
